@@ -554,6 +554,9 @@ int32_t ExynosOverlayDisplay::getDisplayAttributes(const uint32_t attribute)
     case HWC_DISPLAY_DPI_Y:
         return this->mYdpi;
 
+    case HWC_DISPLAY_COLOR_TRANSFORM:
+        return 0; // unknown
+
     default:
         ALOGE("unknown display attribute %u", attribute);
         return -EINVAL;

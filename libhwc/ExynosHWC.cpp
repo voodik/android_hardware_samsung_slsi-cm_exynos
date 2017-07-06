@@ -611,6 +611,7 @@ int exynos5_setPowerMode(struct hwc_composer_device_1 *dev, int disp, int mode)
                 }
             }
         }
+/*
         int err = ioctl(pdev->primaryDisplay->mDisplayFd, FBIOBLANK, fb_blank);
         if (err < 0) {
             if (errno == EBUSY)
@@ -621,6 +622,7 @@ int exynos5_setPowerMode(struct hwc_composer_device_1 *dev, int disp, int mode)
                         strerror(errno));
             return -errno;
         }
+*/
         break;
     }
 
@@ -759,6 +761,9 @@ int32_t exynos5_hdmi_attribute(struct exynos5_hwc_composer_device_1_t *pdev,
 
     case HWC_DISPLAY_DPI_X:
     case HWC_DISPLAY_DPI_Y:
+        return 0; // unknown
+
+    case HWC_DISPLAY_COLOR_TRANSFORM:
         return 0; // unknown
 
     default:
@@ -978,6 +983,8 @@ int exynos5_open(const struct hw_module_t *module, const char *name,
 
     ALOGI("PSR mode is %d(0: video mode, 1: DP PSR mode, 2: MIPI-DSI command mode)\n",
             dev->psrMode);
+
+    exynos5_boot_finished(dev);
 
     dev->base.common.tag = HARDWARE_DEVICE_TAG;
     dev->base.common.version = HWC_DEVICE_API_VERSION_1_4;

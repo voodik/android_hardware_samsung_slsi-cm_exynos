@@ -1,7 +1,7 @@
 
 #define LOG_NDEBUG 1
 #define LOG_TAG "EXTERDISPLAY_LEGACY"
-#include <utils/Log.h>
+#include <cutils/log.h>
 
 #include "ExynosHWC.h"
 #include "ExynosHWCUtils.h"
@@ -913,7 +913,7 @@ int ExynosExternalDisplay::prepare(hwc_display_contents_1_t* contents)
     mHasFbComposition = false;
     for (size_t i = 0; i < contents->numHwLayers; i++) {
         hwc_layer_1_t &layer = contents->hwLayers[i];
-        if (layer.compositionType == HWC_FRAMEBUFFER)
+        if (layer.compositionType == HWC_FRAMEBUFFER || layer.compositionType == HWC_FRAMEBUFFER_TARGET)
             mHasFbComposition = true;
         if (layer.compositionType == HWC_OVERLAY && isLayerBetweenGLES(contents, i))
             layer.compositionType = HWC_FRAMEBUFFER;
