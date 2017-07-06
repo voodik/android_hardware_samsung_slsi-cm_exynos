@@ -34,14 +34,6 @@ bool is_same_dv_timings(const struct v4l2_dv_timings *t1,
     return false;
 }
 #endif
-int ExynosExternalDisplay::getDVTimingsIndex(int preset)
-{
-    for (int i = 0; i < SUPPORTED_DV_TIMINGS_NUM; i++) {
-        if (preset == preset_index_mappings[i].preset)
-            return preset_index_mappings[i].dv_timings_index;
-    }
-    return -1;
-}
 
 inline bool hdmi_src_cfg_changed(exynos_mpp_img &c1, exynos_mpp_img &c2)
 {
@@ -145,7 +137,7 @@ bool ExynosExternalDisplay::isPresetSupported(unsigned int preset)
 {
 #if defined(USE_DV_TIMINGS)
     struct v4l2_enum_dv_timings enum_timings;
-    int dv_timings_index = getDVTimingsIndex(preset);
+    int dv_timings_index = preset;//getDVTimingsIndex(preset);
 #else
     struct v4l2_dv_enum_preset enum_preset;
 #endif
@@ -153,7 +145,7 @@ bool ExynosExternalDisplay::isPresetSupported(unsigned int preset)
     int index = 0;
     int ret;
 
-    if (preset <= V4L2_DV_INVALID || preset > V4L2_DV_1080P30_TB) {
+    if (preset < V4L2_DV_INVALID || preset > V4L2_DV_1080P30_TB) {
         ALOGE("%s: invalid preset, %d", __func__, preset);
         return -1;
     }
@@ -230,9 +222,8 @@ int ExynosExternalDisplay::getConfig()
         return -1;
     }
     for (int i = 0; i < SUPPORTED_DV_TIMINGS_NUM; i++) {
-        dv_timings_index = preset_index_mappings[i].dv_timings_index;
-        if (is_same_dv_timings(&timings, &dv_timings[dv_timings_index])) {
-            preset.preset = preset_index_mappings[i].preset;
+        if (is_same_dv_timings(&timings, &dv_timings[i])) {
+            preset.preset = i;
             break;
         }
     }
@@ -703,7 +694,7 @@ void ExynosExternalDisplay::setPreset(int preset)
     v_preset.preset = preset;
 #else
     struct v4l2_dv_timings dv_timing;
-    int dv_timings_index = getDVTimingsIndex(preset);
+    int dv_timings_index = preset;
     if (dv_timings_index < 0) {
         ALOGE("invalid preset(%d)", preset);
         return;
